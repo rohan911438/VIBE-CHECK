@@ -8,21 +8,16 @@ original_input = builtins.input
 simulated_inputs = [
     "30",  # Age
     "Male",  # Gender
-    "7.5",  # Sleep Duration
-    "8",   # Quality of Sleep
-    "1.0", # Physical Activity Level
-    "70",  # Heart Rate
-    "8000",# Daily Steps
-    "120", # Systolic Blood Pressure
-    "80",  # Diastolic Blood Pressure
-    "Software Engineer", # Occupation (Ensured to be one of the unique occupations)
-    "Normal Weight", # BMI Category (Ensured to be one of the unique BMI categories)
-    "None",  # Sleep Disorder (Ensured to be one of the unique sleep disorders)
-    "100", # Caffeine (mg)
-    "2.0", # Social Hours
-    "1.0", # Social Media Hours
-    "1.5", # Outing Hours
-    "7"    # Mood Rating
+    "7.5",  # Sleep hours
+    "8",   # Sleep quality
+    "1.0", # Exercise hours
+    "70",  # Heart rate
+    "8000",# Daily steps
+    "120", # Systolic BP
+    "80",  # Diastolic BP
+    "Software Engineer", # Occupation
+    "Normal Weight", # BMI category
+    "None"  # Sleep disorder
 ]
 
 # Custom input function that returns values from the list

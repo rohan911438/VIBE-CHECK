@@ -23,29 +23,29 @@ except Exception as e:
     exit()
 
 def get_user_input():
-    """Gathers detailed daily metrics from the user."""
+    """Gathers streamlined daily metrics from the user."""
     print("\n--- Please Enter Your Daily Metrics ---")
     try:
         inputs = {
-            'Age': int(input("Enter your age: ")),
-            'Gender': input("Enter your gender (Male/Female): "),
-            'Sleep Duration': float(input("How many hours did you sleep? ")),
-            'Quality of Sleep': int(input("On a scale of 1-10, how would you rate your quality of sleep? ")),
-            'Physical Activity Level': float(input("How many hours did you exercise? ")),
-            'Heart Rate': int(input("Enter your average heart rate: ")),
-            'Daily Steps': int(input("Enter your daily steps: ")),
-            'Systolic_BP': int(input("Enter your systolic blood pressure (e.g., 120 for 120/80): ")),
-            'Diastolic_BP': int(input("Enter your diastolic blood pressure (e.g., 80 for 120/80): ")),
-            'Occupation': input("Enter your occupation (e.g., Software Engineer, Doctor, Nurse, Salesperson, Teacher, Accountant, Engineer, Scientist, Manager): "),
-            'BMI Category': input("Enter your BMI category (Normal, Overweight, Obese, Normal Weight): "),
-            'Sleep Disorder': input("Do you have a sleep disorder? (None, Sleep Apnea, Insomnia): ")
+            'Age': int(input("Age: ")),
+            'Gender': input("Gender (Male/Female): "),
+            'Sleep Duration': float(input("Sleep hours: ")),
+            'Quality of Sleep': int(input("Sleep quality (1-10): ")),
+            'Physical Activity Level': float(input("Exercise hours: ")),
+            'Heart Rate': int(input("Heart rate: ")),
+            'Daily Steps': int(input("Daily steps: ")),
+            'Systolic_BP': int(input("Systolic BP: ")),
+            'Diastolic_BP': int(input("Diastolic BP: ")),
+            'Occupation': input("Occupation: "),
+            'BMI Category': input("BMI category (Normal, Overweight, Obese, Normal Weight): "),
+            'Sleep Disorder': input("Sleep disorder (None, Sleep Apnea, Insomnia): ")
         }
-        # Additional inputs for logging, not directly used by the current ML model
-        inputs['caffeine_mg'] = float(input("Estimated caffeine intake (in mg)? (1 cup of coffee approx 95mg): "))
-        inputs['social_hours'] = float(input("How many hours did you spend socializing with friends/family? "))
-        inputs['social_media_hours'] = float(input("How many hours did you spend on social media? "))
-        inputs['outing_hours'] = float(input("How many hours did you spend on outings/leisure? "))
-        inputs['mood_rating'] = int(input("On a scale of 1-10, how would you rate your mood today? "))
+        # Set default values for fields not directly used by the ML model but kept for logging
+        inputs['caffeine_mg'] = 0.0  # Default value
+        inputs['social_hours'] = 0.0  # Default value
+        inputs['social_media_hours'] = 0.0 # Default value
+        inputs['outing_hours'] = 0.0   # Default value
+        inputs['mood_rating'] = 5     # Default value (neutral)
 
         return inputs
     except ValueError as e:
@@ -111,13 +111,13 @@ def log_data(inputs, predicted_score, level):
         log_entry = {
             'date': datetime.date.today().isoformat(),
             'sleep_hours': inputs['Sleep Duration'],
-            'work_hours': inputs.get('work_hours', 0), # These are from original heuristic, not directly from sleep_df
+            'work_hours': inputs.get('work_hours', 0), # Defaulted if not asked
             'exercise_hours': inputs['Physical Activity Level'],
-            'caffeine_mg': inputs.get('caffeine_mg', 0),
-            'social_hours': inputs.get('social_hours', 0),
-            'social_media_hours': inputs.get('social_media_hours', 0),
-            'outing_hours': inputs.get('outing_hours', 0),
-            'mood_rating': inputs.get('mood_rating', 0),
+            'caffeine_mg': inputs.get('caffeine_mg', 0.0),
+            'social_hours': inputs.get('social_hours', 0.0),
+            'social_media_hours': inputs.get('social_media_hours', 0.0),
+            'outing_hours': inputs.get('outing_hours', 0.0),
+            'mood_rating': inputs.get('mood_rating', 5),
             'stress_score': f"{predicted_score:.2f}",
             'stress_level': level
         }

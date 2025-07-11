@@ -42,7 +42,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # --- Hyperparameter Tuning ---
 param_grid = {
     'n_estimators': [100, 200, 300],  # Number of trees in the forest
-    'max_features': ['auto', 'sqrt', 'log2'], # Number of features to consider when looking for the best split
+    'max_features': ['sqrt', 'log2'], # Corrected: removed 'auto' as it's deprecated/problematic
     'max_depth': [10, 20, 30, None], # Maximum number of levels in tree
     'min_samples_leaf': [1, 2, 4], # Minimum number of samples required at each leaf node
     'min_samples_split': [2, 5, 10] # Minimum number of samples required to split an internal node
@@ -74,3 +74,12 @@ joblib.dump(X_train.columns.tolist(), 'model_columns.pkl')
 
 print("Tuned model trained and saved as stress_prediction_model.pkl")
 print("Model columns saved as model_columns.pkl")
+
+# --- Print Feature Importances ---
+if hasattr(best_model, 'feature_importances_'):
+    importances = best_model.feature_importances_
+    sorted_features = sorted(zip(importances, X_train.columns), reverse=True)
+
+    print('\nFeature Importances (top 10):')
+    for importance, feature in sorted_features[:10]:
+        print(f'{feature}: {importance:.4f}')
