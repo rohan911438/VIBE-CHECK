@@ -1,0 +1,4 @@
+date,sleep_hours,work_hours,exercise_hours,caffeine_mg,social_hours,social_media_hours,outing_hours,mood_rating,stress_score,stress_level
+2025-07-11,7.5,0,1.0,100.0,2.0,1.0,1.5,7,3.30,Low
+2025-07-11,7.5,0,1.0,100.0,2.0,1.0,1.5,7,4.84,Medium
+2025-07-12,6.0,0,0.0,0.0,0.0,0.0,0.0,9,5.85,Medium
