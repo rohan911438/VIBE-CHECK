@@ -9,15 +9,7 @@ simulated_inputs = [
     "30",  # Age
     "Male",  # Gender
     "7.5",  # Sleep hours
-    "8",   # Sleep quality
-    "1.0", # Exercise hours
-    "70",  # Heart rate
-    "8000",# Daily steps
-    "120", # Systolic BP
-    "80",  # Diastolic BP
-    "Software Engineer", # Occupation
-    "Normal Weight", # BMI category
-    "None"  # Sleep disorder
+    "7"    # Mood Rating
 ]
 
 # Custom input function that returns values from the list

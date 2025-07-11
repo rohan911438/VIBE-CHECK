@@ -29,11 +29,33 @@ sleep_df['Systolic_BP'] = pd.to_numeric(bp_split[0])
 sleep_df['Diastolic_BP'] = pd.to_numeric(bp_split[1])
 sleep_df = sleep_df.drop(columns=['Blood Pressure', 'Person ID'])
 
-# One-hot encode categorical features in sleep_df
+# Create Age_Group for inference defaults
+bins = [10*i for i in range(10)] # Age groups like 0-9, 10-19, ..., 90-99
+labels = [f'{i}-{i+9}' for i in bins[:-1]] # Corrected f-string for labels
+sleep_df['Age_Group'] = pd.cut(sleep_df['Age'], bins=bins, labels=labels, right=False, include_lowest=True)
+
+# Calculate and save feature defaults based on Gender and Age_Group
+feature_defaults = {}
+for gender in sleep_df['Gender'].unique():
+    feature_defaults[gender] = {}
+    for age_group in sleep_df['Age_Group'].unique():
+        subset = sleep_df[(sleep_df['Gender'] == gender) & (sleep_df['Age_Group'] == age_group)]
+        if not subset.empty:
+            feature_defaults[gender][age_group] = {}
+            for col in sleep_df.columns.drop(['Gender', 'Age', 'Age_Group', 'Stress Level']):
+                if pd.api.types.is_numeric_dtype(subset[col]):
+                    feature_defaults[gender][age_group][col] = subset[col].median()
+                else:
+                    feature_defaults[gender][age_group][col] = subset[col].mode()[0]
+
+joblib.dump(feature_defaults, 'feature_defaults.pkl')
+print("Feature defaults saved as feature_defaults.pkl")
+
+# One-hot encode categorical features in sleep_df for model training
 sleep_df_encoded = pd.get_dummies(sleep_df, columns=['Gender', 'Occupation', 'BMI Category', 'Sleep Disorder'], drop_first=True)
 
 # Define features (X) and target (y)
-X = sleep_df_encoded.drop(columns=['Stress Level'])
+X = sleep_df_encoded.drop(columns=['Stress Level', 'Age_Group'])
 y = sleep_df_encoded['Stress Level']
 
 # Split the data into training and testing sets
@@ -41,21 +63,18 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 # --- Hyperparameter Tuning ---
 param_grid = {
-    'n_estimators': [100, 200, 300],  # Number of trees in the forest
-    'max_features': ['sqrt', 'log2'], # Corrected: removed 'auto' as it's deprecated/problematic
-    'max_depth': [10, 20, 30, None], # Maximum number of levels in tree
-    'min_samples_leaf': [1, 2, 4], # Minimum number of samples required at each leaf node
-    'min_samples_split': [2, 5, 10] # Minimum number of samples required to split an internal node
+    'n_estimators': [100, 200, 300],
+    'max_features': ['sqrt', 'log2'],
+    'max_depth': [10, 20, 30, None],
+    'min_samples_leaf': [1, 2, 4],
+    'min_samples_split': [2, 5, 10]
 }
 
-# Initialize GridSearchCV
-grid_search = GridSearchCV(estimator=RandomForestRegressor(random_state=42), param_grid=param_grid, 
-                           cv=3, n_jobs=-1, verbose=2, scoring='r2')
+grid_search = GridSearchCV(estimator=RandomForestRegressor(random_state=42), param_grid=param_grid,
+                           cv=3, n_jobs=-1, verbose=0, scoring='r2') # Set verbose to 0 to reduce output
 
-# Fit GridSearchCV to the training data
 grid_search.fit(X_train, y_train)
 
-# Get the best model
 best_model = grid_search.best_estimator_
 
 print(f"\nBest Hyperparameters: {grid_search.best_params_}")

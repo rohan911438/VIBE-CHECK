@@ -11,12 +11,13 @@ FILE_HEADERS = [
     'stress_score', 'stress_level'
 ]
 
-# Load the trained model and the columns it was trained on
+# Load the trained model, columns, and feature defaults
 try:
     model = joblib.load('stress_prediction_model.pkl')
     expected_model_columns = joblib.load('model_columns.pkl')
+    feature_defaults = joblib.load('feature_defaults.pkl')
 except FileNotFoundError:
-    print("Error: Required model files (stress_prediction_model.pkl or model_columns.pkl) not found. Please run train_stress_model.py first.")
+    print("Error: Required model files (stress_prediction_model.pkl, model_columns.pkl, or feature_defaults.pkl) not found. Please run train_stress_model.py first.")
     exit()
 except Exception as e:
     print(f"An error occurred loading model files: {e}")
@@ -30,64 +31,87 @@ def get_user_input():
             'Age': int(input("Age: ")),
             'Gender': input("Gender (Male/Female): "),
             'Sleep Duration': float(input("Sleep hours: ")),
-            'Quality of Sleep': int(input("Sleep quality (1-10): ")),
-            'Physical Activity Level': float(input("Exercise hours: ")),
-            'Heart Rate': int(input("Heart rate: ")),
-            'Daily Steps': int(input("Daily steps: ")),
-            'Systolic_BP': int(input("Systolic BP: ")),
-            'Diastolic_BP': int(input("Diastolic BP: ")),
-            'Occupation': input("Occupation: "),
-            'BMI Category': input("BMI category (Normal, Overweight, Obese, Normal Weight): "),
-            'Sleep Disorder': input("Sleep disorder (None, Sleep Apnea, Insomnia): ")
+            'Mood Rating': int(input("Mood rating (1-10): "))
         }
-        # Set default values for fields not directly used by the ML model but kept for logging
-        inputs['caffeine_mg'] = 0.0  # Default value
-        inputs['social_hours'] = 0.0  # Default value
-        inputs['social_media_hours'] = 0.0 # Default value
-        inputs['outing_hours'] = 0.0   # Default value
-        inputs['mood_rating'] = 5     # Default value (neutral)
-
         return inputs
     except ValueError as e:
         print(f"\nError: Invalid input. {e}. Please ensure numerical inputs are numbers and others are text.")
         return None
 
-def prepare_input_for_prediction(user_inputs, expected_columns):
-    # Create a DataFrame from user inputs for the model's features
-    model_input_data = {
-        'Age': [user_inputs['Age']],
-        'Sleep Duration': [user_inputs['Sleep Duration']],
-        'Quality of Sleep': [user_inputs['Quality of Sleep']],
-        'Physical Activity Level': [user_inputs['Physical Activity Level']],
-        'Heart Rate': [user_inputs['Heart Rate']],
-        'Daily Steps': [user_inputs['Daily Steps']],
-        'Systolic_BP': [user_inputs['Systolic_BP']],
-        'Diastolic_BP': [user_inputs['Diastolic_BP']],
-        'Gender': [user_inputs['Gender']],
-        'Occupation': [user_inputs['Occupation']],
-        'BMI Category': [user_inputs['BMI Category']],
-        'Sleep Disorder': [user_inputs['Sleep Disorder']]
-    }
-    input_df = pd.DataFrame(model_input_data)
+def get_age_group(age):
+    # Helper to determine age group, matching bins in train_stress_model.py
+    if 0 <= age <= 9:
+        return '0-9'
+    elif 10 <= age <= 19:
+        return '10-19'
+    elif 20 <= age <= 29:
+        return '20-29'
+    elif 30 <= age <= 39:
+        return '30-39'
+    elif 40 <= age <= 49:
+        return '40-49'
+    elif 50 <= age <= 59:
+        return '50-59'
+    elif 60 <= age <= 69:
+        return '60-69'
+    elif 70 <= age <= 79:
+        return '70-79'
+    elif 80 <= age <= 89:
+        return '80-89'
+    else:
+        return '90-99' # Or handle as an outlier/error
+
+def prepare_input_for_prediction(user_inputs, expected_columns, feature_defaults):
+    # Initialize a dictionary to hold all features for the model
+    model_features = {}
+
+    # Directly use user-provided inputs
+    model_features['Age'] = user_inputs['Age']
+    model_features['Sleep Duration'] = user_inputs['Sleep Duration']
+    model_features['Quality of Sleep'] = user_inputs['Mood Rating'] # Using Mood Rating as a proxy for Quality of Sleep
+    model_features['Gender'] = user_inputs['Gender'] # Add Gender to model_features
+
+    # Determine age group for inferring defaults
+    gender = user_inputs['Gender']
+    age_group = get_age_group(user_inputs['Age'])
+
+    # Infer other features using defaults based on Gender and Age_Group
+    defaults = feature_defaults.get(gender, {}).get(age_group, {})
+
+    # Populate remaining features, prioritizing defaults if available
+    features_to_infer = [
+        'Physical Activity Level', 'Heart Rate', 'Daily Steps',
+        'Systolic_BP', 'Diastolic_BP', 'Occupation', 'BMI Category', 'Sleep Disorder'
+    ]
+
+    for feature in features_to_infer:
+        if feature in defaults:
+            model_features[feature] = defaults[feature]
+        else:
+            # Fallback if specific default not found (e.g., for a rare age/gender combo)
+            if feature in ['Physical Activity Level', 'Heart Rate', 'Daily Steps', 'Systolic_BP', 'Diastolic_BP']:
+                model_features[feature] = 0.0 # Global median or a sensible default
+            else: # Categorical
+                model_features[feature] = 'Unknown' # Global mode or a sensible default
+
+    # Create a DataFrame from the collected/inferred features
+    input_df = pd.DataFrame([model_features])
 
     # One-hot encode categorical features
     categorical_cols = ['Gender', 'Occupation', 'BMI Category', 'Sleep Disorder']
     input_df_encoded = pd.get_dummies(input_df, columns=categorical_cols)
 
     # Align columns with the training data
-    # Add missing columns with 0 and reorder to match expected_columns
     for col in expected_columns:
         if col not in input_df_encoded.columns:
             input_df_encoded[col] = 0
     
-    # Ensure the order of feature columns matches the training set
     input_df_aligned = input_df_encoded[expected_columns]
 
     return input_df_aligned
 
 def get_stress_level_and_advice(stress_score):
     """Determines stress level and provides tailored advice based on a numerical score."""
-    # Adjust thresholds based on the model's output scale (0-10 for Stress Level in sleep_df)
     if stress_score >= 8:
         return "Very High", "Your stress levels seem very high. Prioritize rest, consider talking to someone, and reduce workload immediately."
     elif stress_score >= 6:
@@ -112,12 +136,12 @@ def log_data(inputs, predicted_score, level):
             'date': datetime.date.today().isoformat(),
             'sleep_hours': inputs['Sleep Duration'],
             'work_hours': inputs.get('work_hours', 0), # Defaulted if not asked
-            'exercise_hours': inputs['Physical Activity Level'],
+            'exercise_hours': inputs.get('Physical Activity Level', 0), # Defaulted if not asked
             'caffeine_mg': inputs.get('caffeine_mg', 0.0),
             'social_hours': inputs.get('social_hours', 0.0),
             'social_media_hours': inputs.get('social_media_hours', 0.0),
             'outing_hours': inputs.get('outing_hours', 0.0),
-            'mood_rating': inputs.get('mood_rating', 5),
+            'mood_rating': inputs['Mood Rating'],
             'stress_score': f"{predicted_score:.2f}",
             'stress_level': level
         }
@@ -131,7 +155,7 @@ def main():
     user_inputs = get_user_input()
 
     if user_inputs:
-        processed_input = prepare_input_for_prediction(user_inputs, expected_model_columns)
+        processed_input = prepare_input_for_prediction(user_inputs, expected_model_columns, feature_defaults)
 
         # Predict stress score using the loaded model
         predicted_stress_score = model.predict(processed_input)[0]
