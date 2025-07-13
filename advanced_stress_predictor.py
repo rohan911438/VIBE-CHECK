@@ -24,18 +24,40 @@ except Exception as e:
     exit()
 
 def get_user_input():
-    """Gathers streamlined daily metrics from the user."""
-    print("\n--- Please Enter Your Daily Metrics ---")
+    """Gathers daily metrics from the user in a conversational way."""
+    print("\n--- Let's talk about your day to understand your stress level ---")
     try:
+        age = int(input("First, what is your current age? "))
+        gender = input("What is your gender? ")
+
+        print("\nNext, let's talk about your sleep.")
+        sleep_hours = float(input("How many hours did you sleep last night? "))
+        sleep_quality = int(input("And how would you rate the quality of that sleep on a scale from 1 to 10? "))
+
+        print("\nNow, tell me about your day.")
+        physical_activity = input("How physically active were you today? (e.g., walked a lot, exercised, mostly inactive) ")
+        
+        stressed_today = input("Did you feel stressed at any point during the day? (yes/no) ").lower()
+        stress_details = ""
+        if stressed_today == 'yes':
+            stress_details = input("When did that stress feel strongest? (e.g., during work, in the evening) ")
+
+        occupation = input("Finally, what is your current occupation or role? (e.g., student, software engineer) ")
+
         inputs = {
-            'Age': int(input("Age: ")),
-            'Gender': input("Gender (Male/Female): "),
-            'Sleep Duration': float(input("Sleep hours: ")),
-            'Mood Rating': int(input("Mood rating (1-10): "))
+            'Age': age,
+            'Gender': gender,
+            'Sleep Duration': sleep_hours,
+            'Quality of Sleep': sleep_quality,
+            'Mood Rating': sleep_quality,  # Using sleep quality as a proxy for mood rating
+            'Physical Activity': physical_activity,
+            'Stressed Today': stressed_today,
+            'Stress Details': stress_details,
+            'Occupation': occupation
         }
         return inputs
-    except ValueError as e:
-        print(f"\nError: Invalid input. {e}. Please ensure numerical inputs are numbers and others are text.")
+    except ValueError:
+        print("\nError: Invalid input. Please ensure you enter numbers for age, hours, and ratings.")
         return None
 
 def get_age_group(age):
@@ -110,16 +132,29 @@ def prepare_input_for_prediction(user_inputs, expected_columns, feature_defaults
 
     return input_df_aligned
 
-def get_stress_level_and_advice(stress_score):
-    """Determines stress level and provides tailored advice based on a numerical score."""
+def get_stress_level_and_advice(stress_score, user_inputs):
+    """Determines stress level and provides tailored advice based on a numerical score and user inputs."""
+    advice = []
     if stress_score >= 8:
-        return "Very High", "Your stress levels seem very high. Prioritize rest, consider talking to someone, and reduce workload immediately."
+        level = "Very High"
+        advice.append("Your stress levels seem very high. Prioritize rest, consider talking to someone, and reduce workload immediately.")
     elif stress_score >= 6:
-        return "High", "You are likely experiencing significant stress. Focus on improving sleep, exercise, and taking short breaks."
+        level = "High"
+        advice.append("You are likely experiencing significant stress. Focus on improving sleep, exercise, and taking short breaks.")
     elif stress_score >= 4:
-        return "Medium", "You have a moderate level of stress. Small changes like a short walk or less caffeine can make a big difference."
+        level = "Medium"
+        advice.append("You have a moderate level of stress. Small changes can make a big difference.")
     else:
-        return "Low", "Your stress levels appear low. You are managing well. Keep up the healthy habits!"
+        level = "Low"
+        advice.append("Your stress levels appear low. You are managing well. Keep up the healthy habits!")
+
+    # Personalized advice based on user inputs
+    if user_inputs['Sleep Duration'] < 7:
+        advice.append("Getting less than 7 hours of sleep can significantly impact stress. Aim for a consistent sleep schedule.")
+    if user_inputs['Mood Rating'] < 5:
+        advice.append("A low mood rating often correlates with higher stress. Consider activities you enjoy to boost your mood.")
+    
+    return level, " ".join(advice)
 
 def log_data(inputs, predicted_score, level):
     """Logs the daily entry to a CSV file."""
@@ -161,7 +196,7 @@ def main():
         predicted_stress_score = model.predict(processed_input)[0]
 
         # Determine stress level and advice based on the predicted score
-        stress_level, advice = get_stress_level_and_advice(predicted_stress_score)
+        stress_level, advice = get_stress_level_and_advice(predicted_stress_score, user_inputs)
 
         print("\n--- Your Personalized Analysis ---")
         print(f"Predicted Stress Score: {predicted_stress_score:.2f} / 10") # Model predicts on a scale of 0-10
@@ -171,6 +206,7 @@ def main():
 
         # Log all original user inputs along with the predicted stress score and level
         log_data(user_inputs, predicted_stress_score, stress_level)
+
 
 if __name__ == "__main__":
     main()
