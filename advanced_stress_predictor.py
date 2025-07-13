@@ -13,11 +13,11 @@ FILE_HEADERS = [
 
 # Load the trained model, columns, and feature defaults
 try:
-    model = joblib.load('stress_prediction_model.pkl')
-    expected_model_columns = joblib.load('model_columns.pkl')
-    feature_defaults = joblib.load('feature_defaults.pkl')
+    model = joblib.load('unified_stress_model.pkl')
+    expected_model_columns = joblib.load('unified_model_columns.pkl')
+    feature_defaults = joblib.load('unified_feature_defaults.pkl')
 except FileNotFoundError:
-    print("Error: Required model files (stress_prediction_model.pkl, model_columns.pkl, or feature_defaults.pkl) not found. Please run train_stress_model.py first.")
+    print("Error: Required model files (unified_stress_model.pkl, unified_model_columns.pkl, or unified_feature_defaults.pkl) not found. Please run train_unified_model.py first.")
     exit()
 except Exception as e:
     print(f"An error occurred loading model files: {e}")
