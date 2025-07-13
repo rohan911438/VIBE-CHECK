@@ -89,7 +89,7 @@ print(f"Model R-squared (tuned): {r2}")
 
 # Save the best trained model
 joblib.dump(best_model, 'stress_prediction_model.pkl')
-joblib.dump(X_train.columns.tolist(), 'model_columns.pkl')
+joblib.dump(X_train.columns.tolist(), os.path.join('..', '..', '..', 'models', 'model_columns.pkl'))
 
 print("Tuned model trained and saved as stress_prediction_model.pkl")
 print("Model columns saved as model_columns.pkl")

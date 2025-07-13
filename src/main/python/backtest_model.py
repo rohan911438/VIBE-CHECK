@@ -105,27 +105,7 @@ def main():
 
     # Load stress_data.csv
     try:
-        # Create a dummy DataFrame with the new expected columns for backtesting
-        # In a real scenario, you would populate this with actual historical data
-        # that matches the new input requirements of advanced_stress_predictor.py
-        data = {
-            'date': ['2025-07-14', '2025-07-15'],
-            'Age': [30, 25],
-            'Gender': ['Male', 'Female'],
-            'Sleep Duration': [6.5, 8.0],
-            'Quality of Sleep': [4, 7],
-            'Sleep Disorder': ['None', 'Insomnia'],
-            'Physical Activity Level': [0.5, 1.0],
-            'Heart Rate': [75, 68],
-            'Daily Steps': [5000, 10000],
-            'Systolic_BP': [120, 110],
-            'Diastolic_BP': [80, 70],
-            'BMI Category': ['Normal', 'Normal Weight'],
-            'Occupation': ['Software Engineer', 'Doctor'],
-            'stress_score': [0, 0], # Placeholder, will be overwritten
-            'stress_level': ['', ''] # Placeholder, will be overwritten
-        }
-        stress_data_df = pd.DataFrame(data)
+        stress_data_df = pd.read_csv(os.path.join('..', '..', '..', 'data', 'processed', 'stress_data.csv'))
 
     except Exception as e:
         print(f"An error occurred creating dummy data for backtesting: {e}")

@@ -15,7 +15,7 @@ FILE_HEADERS = [
 try:
     model = joblib.load('stress_prediction_model.pkl')
     expected_model_columns = joblib.load('model_columns.pkl')
-    feature_defaults = joblib.load('feature_defaults.pkl')
+    feature_defaults = joblib.load(os.path.join('models', 'feature_defaults.pkl'))
 except FileNotFoundError:
     print("Error: Required model files (stress_prediction_model.pkl, model_columns.pkl, or feature_defaults.pkl) not found. Please run train_stress_model.py first.")
     exit()

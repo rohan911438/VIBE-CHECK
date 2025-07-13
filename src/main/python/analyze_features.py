@@ -2,7 +2,7 @@ import joblib
 
 try:
     model = joblib.load('stress_prediction_model.pkl')
-    columns = joblib.load('model_columns.pkl')
+    columns = joblib.load(os.path.join('..', '..', '..', 'models', 'model_columns.pkl'))
 
     if hasattr(model, 'feature_importances_'):
         importances = model.feature_importances_
