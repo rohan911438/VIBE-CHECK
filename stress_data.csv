@@ -1,13 +1,2 @@
-date,sleep_hours,work_hours,exercise_hours,caffeine_mg,social_hours,social_media_hours,outing_hours,mood_rating,stress_score,stress_level
-2025-07-11,7.5,0,1.0,100.0,2.0,1.0,1.5,7,3.30,Low
-2025-07-11,7.5,0,1.0,100.0,2.0,1.0,1.5,7,4.84,Medium
-2025-07-12,6.0,0,0.0,0.0,0.0,0.0,0.0,9,5.85,Medium
-2025-07-12,7.5,0,1.0,0.0,0.0,0.0,0.0,5,4.84,Medium
-2025-07-12,8.0,0,0.0,0.0,0.0,0.0,0.0,5,4.27,Medium
-2025-07-12,7.5,0,0,0.0,0.0,0.0,0.0,7,5.79,Medium
-2025-07-12,8.0,0,0,0.0,0.0,0.0,0.0,9,3.98,Low
-2025-07-13,8.0,0,0,0.0,0.0,0.0,0.0,2,5.62,Medium
-2025-07-13,9.0,0,0,0.0,0.0,0.0,0.0,8,4.40,Medium
-2025-07-13,9.0,0,0,0.0,0.0,0.0,0.0,7,4.53,Medium
-2025-07-13,9.0,0,0,0.0,0.0,0.0,0.0,9,3.98,Low
-2025-07-13,8.0,0,0,0.0,0.0,0.0,0.0,9,3.98,Low
+date,Age,Gender,Sleep Duration,Quality of Sleep,Sleep Disorder,Physical Activity Level,Heart Rate,Daily Steps,Systolic_BP,Diastolic_BP,BMI Category,Occupation,stress_score,stress_level
+2025-07-13,30,Male,7.5,8,None,1.0,70.0,8000,120.0,80.0,Normal,Software Engineer,4.74,Medium
