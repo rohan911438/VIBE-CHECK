@@ -1,67 +1,145 @@
 # Advanced Stress & Well-being Monitor
 
-## 1. The Core Idea
+## 1. Project Overview
 
-This project is a personalized, data-driven tool designed to help you monitor and understand your daily stress levels. It has evolved from a heuristic model to a more accurate **machine learning model** for predicting stress.
+This project provides a sophisticated, data-driven tool designed to help individuals monitor, understand, and manage their daily stress levels. It leverages a machine learning model to predict stress based on various physiological and lifestyle factors, offering personalized insights and actionable advice.
 
-The primary goal is two-fold:
-1.  **Immediate Insight:** To give you a daily snapshot of your stress level based on key physiological and lifestyle factors.
-2.  **Continuous Improvement:** To systematically log your inputs into a `stress_data.csv` file, which can be used for future model retraining and even more accurate and personalized predictions.
+## 2. Key Features
 
----
+*   **Machine Learning-Powered Stress Prediction:** Utilizes a Random Forest Regressor model, trained on comprehensive health and lifestyle data, to predict a numerical stress score (0-10) and a categorical stress level (Low, Medium, High, Very High).
+*   **Personalized & Actionable Advice:** Generates descriptive and tailored recommendations based on the predicted stress level and specific user inputs, guiding users toward better well-being.
+*   **Comprehensive Data Logging:** Systematically records daily user inputs and predicted stress outcomes into a structured CSV file (`stress_data.csv`), enabling continuous monitoring and future model refinement.
+*   **Model Backtesting Capability:** Includes a dedicated script to evaluate the model's performance on historical data, ensuring reliability and consistency of predictions.
+*   **Robust Error Handling & Logging:** Implements professional-grade error handling and logging mechanisms across all scripts, enhancing stability, maintainability, and ease of debugging.
+*   **Modular and Professional Backend Structure:** Organized into a clear, scalable directory structure, separating source code, data, models, and documentation, suitable for larger projects.
 
-## 2. How It Works
+## 3. Project Structure
 
-The script now uses a **machine learning model** (Random Forest Regressor) trained on a comprehensive dataset (`Sleep_health_and_lifestyle_dataset.csv`). This model predicts your stress level based on the inputs you provide.
+The project follows a standard, organized directory layout:
 
-- **Inputs:** It collects essential data points about your day, focusing on factors scientifically correlated with stress.
-- **Machine Learning Prediction:** The trained model analyzes your inputs to generate a precise stress score.
--   **Data Logging:** Every entry is saved with a timestamp to `stress_data.csv`, creating a valuable personal dataset for future analysis and model refinement.
+```
+Stress prediction/
+├───src/                  # Source code for the application
+│   ├───main/             # Main application logic
+│   │   ├───python/       # Python source files
+│   │   │   ├───advanced_stress_predictor.py  # Main script for daily stress prediction
+│   │   │   ├───train_stress_model.py       # Script to train the stress prediction model
+│   │   │   ├───backtest_model.py           # Script for backtesting the model
+│   │   │   └───analyze_features.py         # Script to analyze model feature importances
+├───data/                 # Data storage
+│   ├───raw/              # Raw, untransformed datasets
+│   │   ├───Sleep_health_and_lifestyle_dataset.csv
+│   ├───processed/        # Processed or generated data (e.g., logged user data)
+│   │   └───stress_data.csv
+├───models/               # Trained machine learning models and related artifacts
+│   ├───stress_prediction_model.pkl
+│   │   ├───model_columns.pkl
+│   │   └───feature_defaults.pkl
+├───tests/                # Unit and integration tests
+│   └───test_predictor.py
+├───docs/                 # Project documentation
+│   └───README.md         # This file
+├───.gitignore            # Specifies intentionally untracked files to ignore
+├───requirements.txt      # Python dependencies
+```
 
----
+## 4. Setup and Installation
 
-## 3. User Input Requirements
+To get this project up and running on your local machine, follow these steps:
+
+### Prerequisites
+
+*   Python 3.8+
+*   `pip` (Python package installer)
+
+### Steps
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd "Stress prediction"
+    ```
+    (Replace `<repository_url>` with the actual URL of your repository.)
+
+2.  **Install dependencies:**
+    Navigate to the root directory of the cloned repository and install the required Python packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## 5. Usage
+
+### 5.1. Training the Stress Prediction Model
+
+Before using the `advanced_stress_predictor.py` or `backtest_model.py`, you should train the model. This script will generate `stress_prediction_model.pkl`, `model_columns.pkl`, and `feature_defaults.pkl` in the `models/` directory.
+
+```bash
+python src/main/python/train_stress_model.py
+```
+
+### 5.2. Daily Stress Prediction
+
+Run the main script to input your daily metrics and get a personalized stress analysis:
+
+```bash
+python src/main/python/advanced_stress_predictor.py
+```
+
+Follow the on-screen prompts to enter the required information.
+
+### 5.3. Model Backtesting
+
+To evaluate the model's performance on historical data (from `data/processed/stress_data.csv`):
+
+```bash
+python src/main/python/backtest_model.py
+```
+
+This will output a summary of predictions and advice for each entry in your logged data.
+
+### 5.4. Analyzing Feature Importances
+
+To understand which features contribute most to the model's predictions:
+
+```bash
+python src/main/python/analyze_features.py
+```
+
+## 6. User Input Requirements (for `advanced_stress_predictor.py`)
 
 To generate your daily analysis, the script will prompt you for the following information. Please provide numerical answers where applicable.
 
-| Input                      | Description                                             |
-| :------------------------- | :------------------------------------------------------ |
-| **Age**                    | Your current age.                                       |
-| **Gender**                 | Your gender (Male/Female).                              |
-| **Sleep hours**            | How many hours you slept last night.                    |
-| **Sleep quality (1-10)**   | Your quality of sleep on a scale of 1-10.               |
-| **Exercise hours**         | How many hours you spent exercising.                    |
-| **Heart rate**             | Your average heart rate.                                |
-| **Daily steps**            | Your daily steps count.                                 |
-| **Systolic BP**            | Your systolic blood pressure (e.g., 120 for 120/80).    |
-| **Diastolic BP**           | Your diastolic blood pressure (e.g., 80 for 120/80).    |
-| **Occupation**             | Your occupation (e.g., Software Engineer, Doctor).      |
-| **BMI category**           | Your BMI category (Normal, Overweight, Obese, Normal Weight). |
-| **Sleep disorder**         | Do you have a sleep disorder? (None, Sleep Apnea, Insomnia). |
+| Input                      | Description                                                                 |
+| :------------------------- | :-------------------------------------------------------------------------- |
+| **Age**                    | Your current age (integer).                                                 |
+| **Gender**                 | Your gender (Male/Female).                                                  |
+| **Sleep Duration**         | How many hours you slept last night (float).                                |
+| **Quality of Sleep (1-10)**| Your quality of sleep on a scale of 1-10 (integer).                         |
+| **Sleep Disorder**         | Do you have a sleep disorder? (None, Sleep Apnea, Insomnia).                |
+| **Physical Activity Level**| How many hours you spent exercising today (float).                          |
+| **Heart Rate**             | Your average heart rate today in beats per minute (float).                  |
+| **Daily Steps**            | Your daily steps count (integer).                                           |
+| **Systolic BP**            | Your systolic blood pressure (e.g., 120 for 120/80) (float).                |
+| **Diastolic BP**           | Your diastolic blood pressure (e.g., 80 for 120/80) (float).                |
+| **BMI Category**           | Your BMI category (Normal, Overweight, Obese, Normal Weight).               |
+| **Occupation**             | Your occupation (e.g., Software Engineer, Doctor).                          |
 
----
+## 7. Output Description
 
-## 4. Desired Output
-
-After you provide your inputs, the script will produce the following output:
+After you provide your inputs, the `advanced_stress_predictor.py` script will produce the following:
 
 1.  **Your Personalized Analysis:**
-    -   **Predicted Stress Score:** A numerical score from 0 to 10.
-    -   **Predicted Stress Level:** A categorical level (Low, Medium, High, or Very High).
-    -   **Personalized Advice:** A brief, actionable recommendation based on your predicted stress level.
+    *   **Predicted Stress Score:** A numerical score from 0 to 10, indicating your stress level.
+    *   **Predicted Stress Level:** A categorical level (Low, Medium, High, or Very High) derived from the score.
+    *   **Personalized Advice:** A detailed, actionable recommendation based on your predicted stress level and specific inputs, designed to help you manage or reduce stress.
 
 2.  **Data Log Confirmation:**
-    -   A confirmation message stating that your data for the day has been successfully saved to `stress_data.csv`.
+    *   A confirmation message stating that your data for the day has been successfully saved to `data/processed/stress_data.csv`.
 
----
+## 8. Logging
 
-## 5. How to Run the Script
+All scripts utilize Python's `logging` module to provide detailed information about their execution, including errors, warnings, and key operational steps. This output is printed to the console.
 
-1.  Ensure you have Python installed.
-2.  Open a terminal or command prompt.
-3.  Navigate to the directory where the script is saved.
-4.  Run the following command:
-    ```sh
-    python advanced_stress_predictor.py
-    ```
-5.  Follow the on-screen prompts to enter your daily metrics.
+## 9. Contributing
+
+Contributions are welcome! If you have suggestions for improvements, bug fixes, or new features, please feel free to open an issue or submit a pull request.

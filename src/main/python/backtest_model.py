@@ -2,17 +2,20 @@ import joblib
 import pandas as pd
 import numpy as np
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load the trained model, columns, and feature defaults
 try:
-    model = joblib.load('stress_prediction_model.pkl')
-    expected_model_columns = joblib.load('model_columns.pkl')
-    feature_defaults = joblib.load('feature_defaults.pkl')
+    model = joblib.load(os.path.join(os.getcwd(), 'models', 'stress_prediction_model.pkl'))
+    expected_model_columns = joblib.load(os.path.join(os.getcwd(), 'models', 'model_columns.pkl'))
+    feature_defaults = joblib.load(os.path.join(os.getcwd(), 'models', 'feature_defaults.pkl'))
 except FileNotFoundError as e:
-    print(f"Error: Required model files not found. Please ensure 'stress_prediction_model.pkl', 'model_columns.pkl', and 'feature_defaults.pkl' are in the same directory. Error: {e}")
+    logging.error(f"Error: Required model files not found. Please ensure 'stress_prediction_model.pkl', 'model_columns.pkl', and 'feature_defaults.pkl' are in the correct directory. Error: {e}")
     exit()
 except Exception as e:
-    print(f"An error occurred loading model files: {e}")
+    logging.error(f"An error occurred loading model files: {e}")
     exit()
 
 def get_age_group(age):
@@ -101,14 +104,17 @@ def get_stress_level_and_advice(stress_score, user_inputs):
     return level, " ".join(advice)
 
 def main():
-    print("--- Backtesting Stress Prediction Model ---")
+    logging.info("--- Backtesting Stress Prediction Model ---")
 
     # Load stress_data.csv
     try:
-        stress_data_df = pd.read_csv(os.path.join('..', '..', '..', 'data', 'processed', 'stress_data.csv'))
+        stress_data_df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'processed', 'stress_data.csv'))
 
+    except FileNotFoundError:
+        logging.error("Error: 'stress_data.csv' not found. Please ensure it exists in the correct directory.")
+        exit()
     except Exception as e:
-        print(f"An error occurred creating dummy data for backtesting: {e}")
+        logging.error(f"An error occurred loading 'stress_data.csv': {e}")
         exit()
 
     results = []
@@ -132,12 +138,12 @@ def main():
         })
 
     results_df = pd.DataFrame(results)
-    print("\n--- Backtesting Results ---")
-    print(results_df.to_string())
+    logging.info("\n--- Backtesting Results ---")
+    logging.info(results_df.to_string())
 
     # Optional: Save results to a new CSV
     # results_df.to_csv('backtesting_results.csv', index=False)
-    # print("\nBacktesting results saved to 'backtesting_results.csv'")
+    # logging.info("\nBacktesting results saved to 'backtesting_results.csv'")
 
 if __name__ == "__main__":
     main()
