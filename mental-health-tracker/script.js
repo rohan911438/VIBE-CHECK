@@ -69,15 +69,18 @@ document.addEventListener('DOMContentLoaded', () => {
             optionsDiv.classList.add('options');
 
             currentQuestion.options.forEach((option, index) => {
-                const label = document.createElement('label');
                 const input = document.createElement('input');
                 input.type = 'radio';
                 input.name = `question${questionNumber}`;
                 input.value = option.value;
-                // Store the key in the dataset
+                input.id = `question${questionNumber}-option${index}`;
                 input.dataset.key = currentQuestion.key;
-                label.appendChild(input);
-                label.append(` ${option.text}`);
+
+                const label = document.createElement('label');
+                label.htmlFor = `question${questionNumber}-option${index}`;
+                label.textContent = option.text;
+
+                optionsDiv.appendChild(input);
                 optionsDiv.appendChild(label);
             });
 
@@ -115,24 +118,24 @@ document.addEventListener('DOMContentLoaded', () => {
         let resultHTML = '';
 
         if (score <= 4) {
-            resultHTML = `<h3>Vibe Check: You're doing great! ✨</h3>`;
-            resultHTML += `<p>Your score of ${score} suggests you're in a good headspace. Keep shining!</p>`;
+            resultHTML = `<h3>Vibe Check: All Good, Fam! ✨</h3>`;
+            resultHTML += `<p>Your score of ${score} means your mental game is strong. Keep that energy up, you're crushing it!</p>`;
             resultHTML += `<h4>Here are some tips to maintain your positive vibe:</h4>`;
             resultHTML += `<ul>`;
-            resultHTML += `<li><strong>Keep moving:</strong> A little exercise can boost your mood.</li>`;
-            resultHTML += `<li><strong>Stay connected:</strong> Spend time with people who lift you up.</li>`;
-            resultHTML += `<li><strong>Practice gratitude:</strong> Take a moment each day to appreciate the good things.</li>`;
+            resultHTML += `<li><strong>Keep moving:</strong> A little exercise can boost your mood, for real.</li>`;
+            resultHTML += `<li><strong>Stay connected:</strong> Hang out with your squad who lift you up.</li>`;
+            resultHTML += `<li><strong>Practice gratitude:</strong> Take a moment each day to appreciate the good things. You got this!</li>`;
             resultHTML += `</ul>`;
         } else if (score <= 8) {
-            resultHTML = `<h3>Vibe Check: A little self-care could help. 💖</h3>`;
-            resultHTML += `<p>Your score of ${score} suggests you might be feeling a bit off. That's okay, everyone has those days.</p>`;
+            resultHTML = `<h3>Vibe Check: Time for some self-care, maybe? 💖</h3>`;
+            resultHTML += `<p>Your score of ${score} means you might be feeling a bit off, and that's totally valid. Let's get you back to feeling your best.</p>`;
             resultHTML += `<h4>Here are some things you can try:</h4>`;
             resultHTML += `<ul>`;
             if (userAnswers.sleep > 1) {
-                resultHTML += `<li><strong>Prioritize sleep:</strong> Try to get 7-9 hours of quality sleep. A consistent sleep schedule can make a big difference.</li>`;
+                resultHTML += `<li><strong>Prioritize sleep:</strong> Try to get 7-9 hours of quality sleep. A consistent sleep schedule can make a big difference, trust.</li>`;
             }
             if (userAnswers.social > 1) {
-                resultHTML += `<li><strong>Reach out:</strong> Connect with a friend or family member. A good conversation can be really helpful.</li>`;
+                resultHTML += `<li><strong>Reach out:</strong> Connect with a friend or family member. A good chat can be really helpful.</li>`;
             }
             if (userAnswers.anxiety > 1) {
                 resultHTML += `<li><strong>Try mindfulness:</strong> A few minutes of deep breathing or meditation can help calm your mind.</li>`;
@@ -140,14 +143,15 @@ document.addEventListener('DOMContentLoaded', () => {
             resultHTML += `<li><strong>Do something you enjoy:</strong> Make time for a hobby or activity that makes you happy.</li>`;
             resultHTML += `</ul>`;
         } else {
-            resultHTML = `<h3>Vibe Check: It's okay to not be okay. Reach out. ❤️</h3>`;
-            resultHTML += `<p>Your score of ${score} suggests you might be going through a tough time. Please know that you're not alone and help is available.</p>`;
+            resultHTML = `<h3>Vibe Check: It's okay to not be okay, seriously. ❤️</h3>`;
+            resultHTML += `<p>Your score of ${score} means you're going through a tough time. You're not alone, and reaching out is a sign of strength.</p>`;
             resultHTML += `<h4>It's important to talk to someone you trust. Here are some resources:</h4>`;
             resultHTML += `<ul>`;
             resultHTML += `<li><strong>Talk to a friend or family member.</strong></li>`;
             resultHTML += `<li><strong>Consider professional help:</strong> A therapist can provide you with tools and support to navigate what you're feeling.</li>`;
-            resultHTML += `<li><strong>Crisis Text Line:</strong> Text HOME to 741741 from anywhere in the US, anytime, about any type of crisis.</li>`;
-            resultHTML += `<li><strong>The Trevor Project:</strong> 1-866-488-7386</li>`;
+            resultHTML += `<li><strong>Crisis Helpline (India):</strong> Call 022-27546669 (AASRA) or 9152987821 (Vandrevala Foundation).</li>`;
+            resultHTML += `<li><strong>Connect with a professional:</strong> Consider reaching out to a therapist or counselor. Platforms like Practo or YourDOST can help you find one.</li>`;
+            resultHTML += `<li><strong>Talk to a trusted elder or friend.</strong></li>`;
             resultHTML += `</ul>`;
         }
         resultContainer.innerHTML = resultHTML;
