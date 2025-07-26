@@ -10,6 +10,7 @@ A modern, Gen Z-focused client-side web application designed to provide a quick 
 
 ## Features
 
+*   **Personalized Welcome:** Start with a name input to personalize the experience.
 *   **Engaging Quiz:** A 5-question interactive quiz with a modern, intuitive interface.
 *   **Dynamic Design:** Features a black and blue dynamic color scheme, appealing to Gen Z aesthetics.
 *   **Personalized Recommendations:** Provides tailored suggestions based on your quiz results, ranging from self-care tips to resources for professional help.
