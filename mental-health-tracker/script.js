@@ -1,7 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const introScreen = document.getElementById('intro-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const userNameInput = document.getElementById('user-name');
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+
     const quizContainer = document.getElementById('quiz-container');
     const submitButton = document.getElementById('submit-btn');
     const resultContainer = document.getElementById('result-container');
+
+    let userName = 'Fam'; // Default name
 
     const questions = [
         {
@@ -56,69 +63,88 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    function buildQuiz() {
-        questions.forEach((currentQuestion, questionNumber) => {
-            const questionDiv = document.createElement('div');
-            questionDiv.classList.add('question');
+    let currentQuestionIndex = 0;
+    const userAnswers = {}; // To store answers for personalized recommendations
 
-            const questionText = document.createElement('p');
-            questionText.innerText = `${questionNumber + 1}. ${currentQuestion.question}`;
-            questionDiv.appendChild(questionText);
+    function showQuestion(index) {
+        quizContainer.innerHTML = ''; // Clear previous question
+        const currentQuestion = questions[index];
 
-            const optionsDiv = document.createElement('div');
-            optionsDiv.classList.add('options');
+        const questionDiv = document.createElement('div');
+        questionDiv.classList.add('question', 'active'); // Add active class for animation
 
-            currentQuestion.options.forEach((option, index) => {
-                const input = document.createElement('input');
-                input.type = 'radio';
-                input.name = `question${questionNumber}`;
-                input.value = option.value;
-                input.id = `question${questionNumber}-option${index}`;
-                input.dataset.key = currentQuestion.key;
+        const questionText = document.createElement('p');
+        questionText.innerText = `${index + 1}. ${currentQuestion.question}`;
+        questionDiv.appendChild(questionText);
 
-                const label = document.createElement('label');
-                label.htmlFor = `question${questionNumber}-option${index}`;
-                label.textContent = option.text;
+        const optionsDiv = document.createElement('div');
+        optionsDiv.classList.add('options');
 
-                optionsDiv.appendChild(input);
-                optionsDiv.appendChild(label);
-            });
+        currentQuestion.options.forEach((option, optionIndex) => {
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `question${index}`;
+            input.value = option.value;
+            input.id = `question${index}-option${optionIndex}`;
+            input.dataset.key = currentQuestion.key;
 
-            questionDiv.appendChild(optionsDiv);
-            quizContainer.appendChild(questionDiv);
+            const label = document.createElement('label');
+            label.htmlFor = `question${index}-option${optionIndex}`;
+            label.textContent = option.text;
+
+            optionsDiv.appendChild(input);
+            optionsDiv.appendChild(label);
         });
+
+        questionDiv.appendChild(optionsDiv);
+        quizContainer.appendChild(questionDiv);
+
+        // Show/hide submit button based on current question
+        if (currentQuestionIndex === questions.length - 1) {
+            submitButton.style.display = 'block';
+        } else {
+            submitButton.style.display = 'none';
+        }
+    }
+
+    function nextQuestion() {
+        const selectedOption = quizContainer.querySelector(`input[name=question${currentQuestionIndex}]:checked`);
+        if (!selectedOption) {
+            resultContainer.innerHTML = "<p>Please select an option before proceeding.</p>";
+            resultContainer.style.color = 'red';
+            return;
+        }
+
+        // Store the answer
+        userAnswers[selectedOption.dataset.key] = parseInt(selectedOption.value);
+
+        // Add fade-out class to current question
+        const currentQuestionDiv = quizContainer.querySelector('.question');
+        currentQuestionDiv.classList.remove('active');
+        currentQuestionDiv.classList.add('fade-out');
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion(currentQuestionIndex);
+                resultContainer.innerHTML = ''; // Clear previous error message
+            } else {
+                showResults();
+            }
+        }, 500); // Match CSS transition duration
     }
 
     function showResults() {
-        const answerContainers = quizContainer.querySelectorAll('.options');
         let score = 0;
-        let allAnswered = true;
-        const userAnswers = {};
-
-        questions.forEach((currentQuestion, questionNumber) => {
-            const answerContainer = answerContainers[questionNumber];
-            const selector = `input[name=question${questionNumber}]:checked`;
-            const userAnswer = (answerContainer.querySelector(selector) || {});
-            
-            if (userAnswer.value === undefined) {
-                allAnswered = false;
-                return;
-            }
-            score += parseInt(userAnswer.value);
-            userAnswers[userAnswer.dataset.key] = parseInt(userAnswer.value);
-        });
-
-        if (!allAnswered) {
-            resultContainer.innerHTML = "<p>Please answer all questions before submitting.</p>";
-            resultContainer.style.color = 'red';
-            return;
+        for (const key in userAnswers) {
+            score += userAnswers[key];
         }
 
         resultContainer.style.color = '#fff';
         let resultHTML = '';
 
         if (score <= 4) {
-            resultHTML = `<h3>Vibe Check: All Good, Fam! ✨</h3>`;
+            resultHTML = `<h3>Vibe Check: All Good, ${userName}! ✨</h3>`;
             resultHTML += `<p>Your score of ${score} means your mental game is strong. Keep that energy up, you're crushing it!</p>`;
             resultHTML += `<h4>Here are some tips to maintain your positive vibe:</h4>`;
             resultHTML += `<ul>`;
@@ -127,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultHTML += `<li><strong>Practice gratitude:</strong> Take a moment each day to appreciate the good things. You got this!</li>`;
             resultHTML += `</ul>`;
         } else if (score <= 8) {
-            resultHTML = `<h3>Vibe Check: Time for some self-care, maybe? 💖</h3>`;
+            resultHTML = `<h3>Vibe Check: Time for some self-care, ${userName}, maybe? 💖</h3>`;
             resultHTML += `<p>Your score of ${score} means you might be feeling a bit off, and that's totally valid. Let's get you back to feeling your best.</p>`;
             resultHTML += `<h4>Here are some things you can try:</h4>`;
             resultHTML += `<ul>`;
@@ -143,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             resultHTML += `<li><strong>Do something you enjoy:</strong> Make time for a hobby or activity that makes you happy.</li>`;
             resultHTML += `</ul>`;
         } else {
-            resultHTML = `<h3>Vibe Check: It's okay to not be okay, seriously. ❤️</h3>`;
+            resultHTML = `<h3>Vibe Check: It's okay to not be okay, ${userName}, seriously. ❤️</h3>`;
             resultHTML += `<p>Your score of ${score} means you're going through a tough time. You're not alone, and reaching out is a sign of strength.</p>`;
             resultHTML += `<h4>It's important to talk to someone you trust. Here are some resources:</h4>`;
             resultHTML += `<ul>`;
@@ -157,6 +183,24 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.innerHTML = resultHTML;
     }
 
-    buildQuiz();
-    submitButton.addEventListener('click', showResults);
+    // Event listener for Start Quiz button
+    startQuizBtn.addEventListener('click', () => {
+        const name = userNameInput.value.trim();
+        if (name) {
+            userName = name;
+        }
+        introScreen.style.display = 'none';
+        quizScreen.style.display = 'block';
+        showQuestion(currentQuestionIndex);
+    });
+
+    // Add event listener for option selection to move to next question
+    quizContainer.addEventListener('change', (event) => {
+        if (event.target.type === 'radio') {
+            nextQuestion();
+        }
+    });
+
+    // Initial setup: hide quiz screen
+    quizScreen.style.display = 'none';
 });

@@ -9,14 +9,26 @@
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-heartbeat"></i> Vibe Check</h1>
-        <p class="subtitle">A quick check-in on your mental wellness.</p>
-        <div id="quiz-container">
-            <!-- Questions will be loaded here by JavaScript -->
+        <div id="intro-screen">
+            <h1><i class="fas fa-heartbeat"></i> Vibe Check</h1>
+            <p class="subtitle">A quick check-in on your mental wellness.</p>
+            <div class="name-input-container">
+                <label for="user-name">What's your name, fam?</label>
+                <input type="text" id="user-name" placeholder="Your name here...">
+                <button id="start-quiz-btn">Let's Vibe!</button>
+            </div>
         </div>
-        <button id="submit-btn">Get My Vibe</button>
-        <div id="result-container">
-            <!-- Result will be displayed here -->
+
+        <div id="quiz-screen" style="display: none;">
+            <h1><i class="fas fa-heartbeat"></i> Vibe Check</h1>
+            <p class="subtitle">A quick check-in on your mental wellness.</p>
+            <div id="quiz-container">
+                <!-- Questions will be loaded here by JavaScript -->
+            </div>
+            <button id="submit-btn">Get My Vibe</button>
+            <div id="result-container">
+                <!-- Result will be displayed here -->
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
