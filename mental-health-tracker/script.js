@@ -8,7 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('submit-btn');
     const resultContainer = document.getElementById('result-container');
 
+    // Gamification elements
     let userName = 'Fam'; // Default name
+    let quizHistory = JSON.parse(localStorage.getItem('vibeQuizHistory') || '[]');
+    let streak = getCurrentStreak(quizHistory);
+
+    // Add history and streak display to intro screen
+    let historyDiv = document.createElement('div');
+    historyDiv.id = 'history-streak';
+    introScreen.appendChild(historyDiv);
+    updateHistoryStreakDisplay();
 
     const questions = [
         {
@@ -67,11 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const userAnswers = {}; // To store answers for personalized recommendations
 
     function showQuestion(index) {
-        quizContainer.innerHTML = ''; // Clear previous question
+        quizContainer.innerHTML = '';
         const currentQuestion = questions[index];
 
         const questionDiv = document.createElement('div');
-        questionDiv.classList.add('question', 'active'); // Add active class for animation
+        questionDiv.classList.add('question', 'active');
 
         const questionText = document.createElement('p');
         questionText.innerText = `${index + 1}. ${currentQuestion.question}`;
@@ -140,8 +149,28 @@ document.addEventListener('DOMContentLoaded', () => {
             score += userAnswers[key];
         }
 
+        // Save result to localStorage
+        const today = new Date().toISOString().slice(0, 10);
+        quizHistory.push({ date: today, score });
+        // Keep only last 30 entries
+        if (quizHistory.length > 30) quizHistory = quizHistory.slice(-30);
+        localStorage.setItem('vibeQuizHistory', JSON.stringify(quizHistory));
+        streak = getCurrentStreak(quizHistory);
+        updateHistoryStreakDisplay();
+
         resultContainer.style.color = '#fff';
         let resultHTML = '';
+
+        // Badges
+        let badges = '';
+        if (streak >= 7) {
+            badges += `<span class="badge gold">🔥 7-Day Streak!</span> `;
+        } else if (streak >= 3) {
+            badges += `<span class="badge silver">✨ 3-Day Streak!</span> `;
+        }
+        if (quizHistory.length >= 10) {
+            badges += `<span class="badge bronze">🏅 10+ Quizzes!</span> `;
+        }
 
         if (score <= 4) {
             resultHTML = `<h3>Vibe Check: All Good, ${userName}! ✨</h3>`;
@@ -180,7 +209,53 @@ document.addEventListener('DOMContentLoaded', () => {
             resultHTML += `<li><strong>Talk to a trusted elder or friend.</strong></li>`;
             resultHTML += `</ul>`;
         }
+        // Show badges and history
+        resultHTML = badges + resultHTML + getHistoryHTML();
         resultContainer.innerHTML = resultHTML;
+    }
+
+    // Helper: Get current streak (days in a row)
+    function getCurrentStreak(history) {
+        if (!history.length) return 0;
+        let streak = 1;
+        let prev = new Date(history[history.length - 1].date);
+        for (let i = history.length - 2; i >= 0; i--) {
+            let curr = new Date(history[i].date);
+            let diff = (prev - curr) / (1000 * 60 * 60 * 24);
+            if (diff === 1) {
+                streak++;
+                prev = curr;
+            } else if (diff > 1) {
+                break;
+            }
+        }
+        return streak;
+    }
+
+    // Helper: Show quiz history and streak
+    function updateHistoryStreakDisplay() {
+        let html = '';
+        if (quizHistory.length) {
+            html += `<div class="streak-info"><strong>Current Streak:</strong> ${streak} day(s)`;
+            if (streak >= 7) html += ' <span class="badge gold">🔥</span>';
+            else if (streak >= 3) html += ' <span class="badge silver">✨</span>';
+            html += `</div>`;
+            html += `<div class="history-info"><strong>Quiz History:</strong> ${quizHistory.length} taken</div>`;
+        } else {
+            html = '<div class="history-info">Take your first quiz to start your streak!</div>';
+        }
+        document.getElementById('history-streak').innerHTML = html;
+    }
+
+    // Helper: Get HTML for quiz history (last 5)
+    function getHistoryHTML() {
+        if (!quizHistory.length) return '';
+        let html = '<div class="recent-history"><h4>Recent Quizzes</h4><ul>';
+        quizHistory.slice(-5).reverse().forEach(q => {
+            html += `<li>${q.date}: Score ${q.score}</li>`;
+        });
+        html += '</ul></div>';
+        return html;
     }
 
     // Event listener for Start Quiz button
@@ -203,4 +278,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial setup: hide quiz screen
     quizScreen.style.display = 'none';
+    // Add badge styles
+    const style = document.createElement('style');
+    style.innerHTML = `
+    .badge { display: inline-block; padding: 0.2em 0.7em; border-radius: 12px; font-size: 1em; margin-right: 0.5em; font-weight: bold; }
+    .badge.gold { background: linear-gradient(90deg,#ffd700,#fffbe6); color: #b8860b; border: 1px solid #ffd700; }
+    .badge.silver { background: linear-gradient(90deg,#e0e0e0,#f8f8f8); color: #555; border: 1px solid #aaa; }
+    .badge.bronze { background: linear-gradient(90deg,#cd7f32,#fff0e0); color: #7c4700; border: 1px solid #cd7f32; }
+    .recent-history { margin-top: 1.5em; }
+    .recent-history ul { padding-left: 1.2em; }
+    .streak-info, .history-info { margin: 0.5em 0; }
+    `;
+    document.head.appendChild(style);
 });
