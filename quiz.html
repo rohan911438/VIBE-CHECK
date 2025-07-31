@@ -9,6 +9,12 @@
     <link rel="icon" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+      // Redirect to landing page if not coming from index.html
+      if (document.referrer === '' || !document.referrer.endsWith('/index.html')) {
+        window.location.replace('index.html');
+      }
+    </script>
 </head>
 <body>
     <div class="container">
