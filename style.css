@@ -1,3 +1,73 @@
+.badge {
+    display: inline-block;
+    padding: 0.4em 1em;
+    border-radius: 20px;
+    font-size: 1em;
+    font-weight: 700;
+    margin: 0.2em 0.3em 0.2em 0;
+    color: #fff;
+    background: #64748b;
+    box-shadow: 0 2px 8px rgba(100,116,139,0.15);
+    letter-spacing: 0.02em;
+}
+.badge.gold {
+    background: linear-gradient(90deg, #fbbf24 60%, #f59e42 100%);
+    color: #1e293b;
+    border: 1.5px solid #f59e42;
+}
+.badge.silver {
+    background: linear-gradient(90deg, #cbd5e1 60%, #94a3b8 100%);
+    color: #1e293b;
+    border: 1.5px solid #94a3b8;
+}
+.badge.bronze {
+    background: linear-gradient(90deg, #fbbf24 60%, #b45309 100%);
+    color: #1e293b;
+    border: 1.5px solid #b45309;
+}
+
+#history-streak, .history {
+    margin-top: 1.2em;
+    background: #334155;
+    border-radius: 10px;
+    padding: 1em 1.2em;
+    color: #f1f5f9;
+    font-size: 1em;
+    box-shadow: 0 2px 8px rgba(51,65,85,0.08);
+    text-align: left;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.history ul {
+    margin: 0.5em 0 0 1.2em;
+    padding: 0;
+    color: #e0e7ef;
+    font-size: 0.98em;
+}
+.history h4 {
+    margin: 0 0 0.5em 0;
+    color: #60a5fa;
+    font-size: 1.1em;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+        max-width: 98vw;
+    }
+    h1 {
+        font-size: 2rem;
+    }
+    .about-section {
+        padding: 1rem;
+    }
+    #result-container, #history-streak, .history {
+        padding: 0.7em 0.5em;
+        font-size: 0.98em;
+    }
+}
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
