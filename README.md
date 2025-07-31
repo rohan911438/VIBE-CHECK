@@ -1,7 +1,8 @@
 
+
 # Vibe Check: Mental Wellness Platform
 
-> **A modern, Gen Z-focused web and data science project for mental wellness assessment, stress prediction, and actionable self-care.**
+> **A modern, Gen Z-focused full-stack web and data science project for mental wellness assessment, stress prediction, and actionable self-care.**
 
 ---
 
@@ -10,8 +11,10 @@
 - [Features](#features)
 - [Architecture & File Structure](#architecture--file-structure)
 - [Setup & Usage](#setup--usage)
+- [Backend API](#backend-api)
 - [Technologies Used](#technologies-used)
-- [Future Enhancements](#future-enhancements)
+- [Deployment](#deployment)
+- [Future Plans](#future-plans)
 - [Contributing](#contributing)
 - [Author](#author)
 - [License](#license)
@@ -20,10 +23,11 @@
 
 ## Project Overview
 
-**Vibe Check** is a comprehensive mental wellness platform designed for Gen Z and young adults. It combines a stylish, privacy-first web application with robust data science models to:
-- Provide instant, engaging mental health self-assessments via an interactive quiz
-- Predict stress levels using machine learning on lifestyle and health data
-- Offer personalized, actionable recommendations for self-care and professional help
+**Vibe Check** is a comprehensive, full-stack mental wellness platform designed for Gen Z and young adults. It features:
+- A stylish, privacy-first web application for instant mental health self-assessment
+- Gamification: quiz history, streaks, and badges (all client-side)
+- A Node.js/Express backend for storing quiz results and enabling future features like user accounts and analytics
+- Data science scripts and models for stress prediction and feature analysis
 
 The project aims to break the stigma around mental health by making check-ins fun, accessible, and data-driven.
 
@@ -33,13 +37,21 @@ The project aims to break the stigma around mental health by making check-ins fu
 
 ## Features
 
-### Web Application (Client-Side)
+
+### Web Application (Frontend)
+- **Landing Page:** Modern, mobile-friendly landing/about page (`landing.html`)
 - **Personalized Welcome:** Users enter their name for a custom experience
 - **Engaging Quiz:** 5-question interactive quiz covering mood, sleep, social connection, anxiety, and energy
+- **Gamification:** Quiz history, daily streaks, and badges (tracked in localStorage)
 - **Dynamic Design:** Black & blue Gen Z aesthetic, responsive for all devices
 - **Instant Feedback:** Immediate results with clear, friendly messaging
 - **Personalized Recommendations:** Tailored self-care tips and resources based on quiz results
-- **Privacy-First:** 100% client-side, no data leaves your browser
+- **Privacy-First:** 100% client-side, no data leaves your browser unless backend is enabled
+
+### Backend (Node.js/Express)
+- **REST API:** Store and retrieve quiz results (see [Backend API](#backend-api))
+- **Simple JSON storage:** Easy to upgrade to a real database (MongoDB, PostgreSQL, etc.)
+- **CORS enabled:** Ready for frontend-backend integration
 
 ### Data Science & Stress Prediction
 - **Machine Learning Model:** Predicts stress levels from lifestyle/health data (see `models/` and `src/main/python/`)
@@ -93,18 +105,35 @@ VIBE-CHECK/
 
 ---
 
+
 ## Setup & Usage
 
-### 1. Web Application (Mental Wellness Quiz)
+### 1. Web Application (Frontend)
 
 **Quick Start:**
 1. Clone or download this repository
-2. Open `mental-health-tracker/index.html` in your web browser
-3. Enter your name, answer the quiz, and get instant feedback & recommendations
+2. Open `mental-health-tracker/landing.html` in your web browser (or deploy as a static site)
+3. Click "Start the Quiz" to use the app
 
-**No installation or server required!**
+**No installation or server required for static mode!**
 
-### 2. Data Science & Stress Prediction
+### 2. Backend Server (Optional, for full-stack features)
+
+**Requirements:** Node.js 18+
+
+**To run the backend locally:**
+1. Open a terminal and navigate to `server/`
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
+   The backend will run on [http://localhost:3001](http://localhost:3001)
+
+### 3. Data Science & Stress Prediction
 
 **Requirements:** Python 3.8+, see `requirements.txt`
 
@@ -121,6 +150,19 @@ Run unit tests with:
 ```bash
 python -m unittest discover tests
 ```
+
+---
+
+## Backend API
+
+The backend provides a simple REST API for quiz results:
+
+- `GET /api/results` — Get all quiz results
+- `POST /api/results` — Add a new quiz result (JSON: `{ name, date, score }`)
+
+See `server/README.md` for more details.
+
+---
 
 ---
 
@@ -141,16 +183,36 @@ python -m unittest discover tests
 
 ---
 
-## Future Enhancements
+
+## Deployment
+
+### Static Frontend (Recommended for GitHub Pages, Vercel, Netlify)
+- Deploy the contents of `mental-health-tracker/` as your site root
+- Set `landing.html` as the entry point (rename to `index.html` if needed)
+- All features except backend integration will work out-of-the-box
+
+### Full-Stack (Backend + Frontend)
+- Deploy the backend (Node.js/Express) to a cloud service (e.g., Render, Heroku, Railway, AWS, etc.)
+- Update the frontend JS to point to your deployed backend API URL
+- For production, use a real database (MongoDB, PostgreSQL, etc.) instead of the local JSON file
+
+---
+
+## Future Plans
 
 See [`expectation.txt`](expectation.txt) for a detailed roadmap, including:
-- User accounts & personalization
-- More dynamic/interactive quiz types
-- Community & social features
-- Gamification (streaks, badges)
-- Integration with wearables/health apps
-- Multilingual support
-- Scalability, security, and performance improvements
+- User accounts & personalization (registration, login, quiz history sync)
+- More dynamic/interactive quiz types (animations, sliders, drag-and-drop)
+- Community & social features (anonymous sharing, forums, curated content)
+- Gamification (streaks, badges, leaderboards, rewards)
+- Integration with wearables/health apps (Google Fit, Apple Health)
+- Multilingual support (Hindi, English, regional languages)
+- Accessibility improvements
+- Scalability, security, and performance enhancements
+- Admin dashboard and analytics
+- Mobile app version
+
+---
 
 ---
 
