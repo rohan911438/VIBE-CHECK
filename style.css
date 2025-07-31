@@ -1,3 +1,195 @@
-/* Vibe Check Styles (formerly mental-health-tracker/style.css) */
-/* ...existing code from style.css in mental-health-tracker... */
-/* This is a placeholder. The actual code will be copied in the next step. */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #0f172a;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 1rem;
+}
+
+.container {
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 550px;
+    animation: fadeIn 1s ease-in-out;
+    border: 1px solid #334155;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #60a5fa;
+    text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+}
+
+/* Intro Screen Styles */
+#intro-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+}
+
+.name-input-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 80%;
+    max-width: 300px;
+}
+
+.name-input-container label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.name-input-container input[type="text"] {
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #334155;
+    color: #e2e8f0;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.name-input-container input[type="text"]:focus {
+    border-color: #60a5fa;
+}
+
+#start-quiz-btn {
+    background: #60a5fa;
+    color: #1e293b;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(96, 165, 250, 0.2);
+}
+
+#start-quiz-btn:hover {
+    background: #3b82f6;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(96, 165, 250, 0.3);
+}
+
+
+#quiz-container {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+
+.question {
+    margin-bottom: 1.5rem;
+    opacity: 0; /* Start hidden */
+    transform: translateY(20px); /* Start slightly below */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.question.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.question.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+
+.question p {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #e2e8f0;
+}
+
+.options label {
+    display: block;
+    background: #334155;
+    margin-bottom: 0.75rem;
+    padding: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #475569;
+}
+
+.options label:hover {
+    background: #475569;
+    transform: translateX(5px);
+}
+
+.options input[type="radio"] {
+    display: none;
+}
+
+.options input[type="radio"]:checked + label {
+    background: #60a5fa;
+    color: #1e293b;
+    font-weight: 600;
+    border-color: #60a5fa;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.7);
+    transform: scale(1.02);
+}
+
+button {
+    background: #60a5fa;
+    color: #1e293b;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(96, 165, 250, 0.2);
+}
+
+button:hover {
+    background: #3b82f6;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(96, 165, 250, 0.3);
+}
+
+#result-container {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: #1e293b;
+    padding: 1.5rem;
+    border-radius: 10px;
+    animation: fadeIn 1s;
+    border: 1px solid #334155;
+    color: #e2e8f0;
+}
