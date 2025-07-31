@@ -10,13 +10,14 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
-      // Allow access if referrer is root or index.html (GitHub Pages compatible)
+      // Allow access if referrer is from the same origin (site), or if user is navigating from root or index.html
       const ref = document.referrer;
-      const allowed =
-        ref.endsWith('/VIBE-CHECK/') ||
-        ref.endsWith('/VIBE-CHECK/index.html') ||
-        ref === '';
-      if (!allowed) {
+      const { origin, pathname } = window.location;
+      // Allow if referrer is from the same site (covers all internal navigation)
+      const isInternal = ref.startsWith(origin);
+      // Allow if user is coming from root or index.html (GitHub Pages root navigation)
+      const isRoot = ref === `${origin}/VIBE-CHECK/` || ref === `${origin}/VIBE-CHECK/index.html`;
+      if (!isInternal && !isRoot) {
         window.location.replace('index.html');
       }
     </script>
