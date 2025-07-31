@@ -10,8 +10,13 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
-      // Redirect to landing page if not coming from index.html
-      if (document.referrer === '' || !document.referrer.endsWith('/index.html')) {
+      // Allow access if referrer is root or index.html (GitHub Pages compatible)
+      const ref = document.referrer;
+      const allowed =
+        ref.endsWith('/VIBE-CHECK/') ||
+        ref.endsWith('/VIBE-CHECK/index.html') ||
+        ref === '';
+      if (!allowed) {
         window.location.replace('index.html');
       }
     </script>
