@@ -98,16 +98,34 @@ if (introScreen) {
     historyDiv.style.borderRadius = '8px';
     historyDiv.style.border = '1px solid #334155';
     introScreen.appendChild(historyDiv);
-    updateHistoryStreakDisplay();
+    
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+        updateHistoryStreakDisplay();
+    }, 100);
+} else {
+    console.log('Intro screen not found - this is normal for direct quiz access');
 }
 
 function showQuestion(index) {
+    console.log('Showing question:', index, 'Total questions:', questions.length); // Debug log
+    
     if (index >= questions.length) {
         showSubmitButton();
         return;
     }
 
     const question = questions[index];
+    if (!question) {
+        console.error('Question not found at index:', index);
+        return;
+    }
+    
+    if (!quizContainer) {
+        console.error('Quiz container not found');
+        return;
+    }
+    
     quizContainer.innerHTML = '';
 
     const questionDiv = document.createElement('div');
@@ -117,21 +135,26 @@ function showQuestion(index) {
     const optionsDiv = document.createElement('div');
     optionsDiv.classList.add('options');
 
-    question.options.forEach((option, optionIndex) => {
-        const optionLabel = document.createElement('label');
-        optionLabel.classList.add('option');
-        
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = `question${index}`;
-        input.value = option.value;
-        input.id = `question${index}-option${optionIndex}`;
-        input.dataset.key = question.key;
+    if (question.options && question.options.length > 0) {
+        question.options.forEach((option, optionIndex) => {
+            const optionLabel = document.createElement('label');
+            optionLabel.classList.add('option');
+            
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = `question${index}`;
+            input.value = option.value;
+            input.id = `question${index}-option${optionIndex}`;
+            input.dataset.key = question.key;
 
-        optionLabel.appendChild(input);
-        optionLabel.appendChild(document.createTextNode(' ' + option.text));
-        optionsDiv.appendChild(optionLabel);
-    });
+            optionLabel.appendChild(input);
+            optionLabel.appendChild(document.createTextNode(' ' + option.text));
+            optionsDiv.appendChild(optionLabel);
+        });
+    } else {
+        console.error('No options found for question:', index);
+        optionsDiv.innerHTML = '<p style="color: red;">Error: No options available for this question.</p>';
+    }
 
     questionDiv.appendChild(optionsDiv);
     quizContainer.appendChild(questionDiv);
@@ -139,19 +162,37 @@ function showQuestion(index) {
     if (submitButton) {
         submitButton.style.display = 'none';
     }
+    
+    console.log('Question displayed successfully:', index); // Debug log
 }
 
 function nextQuestion() {
+    console.log('Next question called. Current index:', currentQuestionIndex); // Debug log
+    
+    if (currentQuestionIndex >= questions.length) {
+        console.log('Already at last question, showing submit button');
+        showSubmitButton();
+        return;
+    }
+    
     const currentQuestion = questions[currentQuestionIndex];
+    if (!currentQuestion) {
+        console.error('Current question not found at index:', currentQuestionIndex);
+        return;
+    }
+    
     const selectedOption = document.querySelector(`input[name="question${currentQuestionIndex}"]:checked`);
     
     if (selectedOption) {
+        console.log('Answer selected:', selectedOption.value, 'for question:', currentQuestionIndex);
         userAnswers[currentQuestion.key] = parseInt(selectedOption.value);
         currentQuestionIndex++;
         
         setTimeout(() => {
             showQuestion(currentQuestionIndex);
         }, 300);
+    } else {
+        console.log('No option selected for question:', currentQuestionIndex);
     }
 }
 
@@ -266,19 +307,28 @@ function restartQuiz() {
 
 function updateHistoryStreakDisplay() {
     const historyElement = document.getElementById('history-streak');
-    if (!historyElement) return;
-    
-    let html = '';
-    if (quizHistory.length) {
-        html += `<div class="streak-info"><strong>Current Streak:</strong> ${currentStreak} day(s)`;
-        if (currentStreak >= 7) html += ' <span class="badge gold">🔥</span>';
-        else if (currentStreak >= 3) html += ' <span class="badge silver">✨</span>';
-        html += `</div>`;
-        html += `<div class="history-info"><strong>Quiz History:</strong> ${quizHistory.length} taken</div>`;
-    } else {
-        html = '<div class="history-info">Take your first quiz to start your streak!</div>';
+    if (!historyElement) {
+        console.log('History element not found, skipping update');
+        return;
     }
-    historyElement.innerHTML = html;
+    
+    try {
+        let html = '';
+        if (quizHistory.length) {
+            html += `<div class="streak-info"><strong>Current Streak:</strong> ${currentStreak} day(s)`;
+            if (currentStreak >= 7) html += ' <span class="badge gold">🔥</span>';
+            else if (currentStreak >= 3) html += ' <span class="badge silver">✨</span>';
+            html += `</div>`;
+            html += `<div class="history-info"><strong>Quiz History:</strong> ${quizHistory.length} taken</div>`;
+        } else {
+            html = '<div class="history-info">Take your first quiz to start your streak!</div>';
+        }
+        historyElement.innerHTML = html;
+        console.log('History display updated successfully');
+    } catch (error) {
+        console.error('Error updating history display:', error);
+        historyElement.innerHTML = '<div class="history-info">Welcome to Vibe Check!</div>';
+    }
 }
 
 function getHistoryHTML() {
@@ -300,25 +350,37 @@ if (startQuizBtn) {
             const name = userNameInput.value.trim();
             if (name) {
                 userName = name;
+                console.log('User name set to:', userName);
             }
         }
         
         if (introScreen && quizScreen) {
             introScreen.style.display = 'none';
             quizScreen.style.display = 'block';
+            console.log('Switched to quiz screen');
         }
+        
+        // Reset quiz state
+        currentQuestionIndex = 0;
+        userAnswers = {};
+        console.log('Quiz state reset, starting with question 0');
         
         showQuestion(currentQuestionIndex);
     });
+} else {
+    console.error('Start quiz button not found!');
 }
 
 // Add event listener for option selection to move to next question
 if (quizContainer) {
     quizContainer.addEventListener('change', function(event) {
         if (event.target.type === 'radio') {
+            console.log('Radio button selected:', event.target.value);
             nextQuestion();
         }
     });
+} else {
+    console.error('Quiz container not found!');
 }
 
 // Initial setup
