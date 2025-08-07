@@ -4,7 +4,6 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 const DATA_FILE = path.join(__dirname, 'quiz_results.json');
 
 app.use(cors());
@@ -36,6 +35,5 @@ app.post('/api/results', (req, res) => {
     res.status(201).json({ message: 'Result saved' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Vibe Check backend running on port ${PORT}`);
-});
+// Remove app.listen() and export the app object for Vercel
+module.exports = app;

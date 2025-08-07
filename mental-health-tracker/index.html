@@ -3,34 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Check: Mental Wellness Quiz</title>
+    <title>Vibe Check - Welcome</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .landing-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #0f172a;
+            color: #fff;
+            text-align: center;
+        }
+        .landing-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+        .landing-subtitle {
+            font-size: 1.3rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        .landing-btn {
+            background: #60a5fa;
+            color: #1e293b;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.2);
+            margin-top: 2rem;
+        }
+        .landing-btn:hover {
+            background: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(96, 165, 250, 0.3);
+        }
+        .about-section {
+            margin-top: 3rem;
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #334155;
+        }
+        .about-section h2 {
+            color: #60a5fa;
+            margin-bottom: 1rem;
+        }
+        .about-section ul {
+            text-align: left;
+            margin: 1rem 0 0 1.5rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div id="intro-screen">
-            <h1><i class="fas fa-heartbeat"></i> Vibe Check</h1>
-            <p class="subtitle">A quick check-in on your mental wellness.</p>
-            <div class="name-input-container">
-                <label for="user-name">What's your name, fam?</label>
-                <input type="text" id="user-name" placeholder="Your name here...">
-                <button id="start-quiz-btn">Let's Vibe!</button>
-            </div>
+    <div class="landing-container">
+        <div>
+            <h1 class="landing-title"><i class="fas fa-heartbeat"></i> Vibe Check</h1>
+            <div class="landing-subtitle">Your Gen Z Mental Wellness Platform</div>
+            <a href="index.html"><button class="landing-btn">Start the Quiz</button></a>
         </div>
-
-        <div id="quiz-screen" style="display: none;">
-            <h1><i class="fas fa-heartbeat"></i> Vibe Check</h1>
-            <p class="subtitle">A quick check-in on your mental wellness.</p>
-            <div id="quiz-container">
-                <!-- Questions will be loaded here by JavaScript -->
-            </div>
-            <button id="submit-btn">Get My Vibe</button>
-            <div id="result-container">
-                <!-- Result will be displayed here -->
-            </div>
+        <div class="about-section">
+            <h2>About Vibe Check</h2>
+            <p>Vibe Check is a modern, privacy-first mental wellness platform designed for Gen Z and young adults. It offers:</p>
+            <ul>
+                <li>Instant, engaging mental health self-assessments</li>
+                <li>Personalized recommendations for self-care</li>
+                <li>Gamification: streaks, badges, and quiz history</li>
+                <li>All data stays on your device – 100% client-side</li>
+            </ul>
+            <p style="margin-top:1.5rem;font-size:0.95em;color:#94a3b8;">Disclaimer: This tool is for informational purposes only and is not a substitute for professional medical advice, diagnosis, or treatment.</p>
         </div>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
