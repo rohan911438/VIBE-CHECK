@@ -37,3 +37,10 @@ app.post('/api/results', (req, res) => {
 
 // Remove app.listen() and export the app object for Vercel
 module.exports = app;
+
+if (require.main === module) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Server running locally on port ${PORT}`);
+  });
+}
